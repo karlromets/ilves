@@ -6,16 +6,99 @@ import {
   submissionsTable,
   type Prize,
 } from "../db/schema.js";
-import { eq, and, asc, sql } from "drizzle-orm";
+import { eq, and, asc, sql, gte, desc, inArray, not } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import "dotenv/config";
 
 const submissionsRoute = new Hono();
 
-submissionsRoute.get("/", async (c) => {
-  const submissions = await db.select().from(submissionsTable);
-  return c.json(submissions);
+submissionsRoute.get("/count", async (c) => {
+  const now = new Date();
+
+  const startOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - now.getDay());
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const submissionsToday = await db
+    .select()
+    .from(submissionsTable)
+    .where(gte(submissionsTable.submittedAt, startOfToday));
+
+  const submissionsThisWeek = await db
+    .select()
+    .from(submissionsTable)
+    .where(gte(submissionsTable.submittedAt, startOfWeek));
+
+  const submissionsThisMonth = await db
+    .select()
+    .from(submissionsTable)
+    .where(gte(submissionsTable.submittedAt, startOfMonth));
+
+  const totalSubmissions = await db.select().from(submissionsTable);
+
+  const stats = {
+    daily: submissionsToday.length,
+    weekly: submissionsThisWeek.length,
+    monthly: submissionsThisMonth.length,
+    total: totalSubmissions.length,
+  };
+
+  return c.json(stats);
+});
+
+submissionsRoute.get("/leaderboard", async (c) => {
+  const leaderboard = await db
+    .select({
+      id: submissionsTable.id,
+      firstName: submissionsTable.firstName,
+      lastName: submissionsTable.lastName,
+      submittedAt: submissionsTable.submittedAt,
+      prizeId: submissionsTable.prizeId,
+    })
+    .from(submissionsTable)
+    .where(
+      and(
+        eq(submissionsTable.isWinner, true),
+        not(eq(submissionsTable.firstName, '')),
+        not(eq(submissionsTable.lastName, ''))
+      )
+    )
+    .orderBy(desc(submissionsTable.submittedAt));
+
+  const prizeIds = leaderboard
+    .map((submission) => submission.prizeId)
+    .filter((id): id is number => id !== null);
+
+  if (prizeIds.length === 0) {
+    return c.json([]);
+  }
+
+  const prizes = await db
+    .select({
+      id: prizesTable.id,
+      tier: prizesTable.tier,
+    })
+    .from(prizesTable)
+    .where(inArray(prizesTable.id, prizeIds));
+
+  const prizeMap = new Map(prizes.map((p) => [p.id, p.tier]));
+
+  let leaderboardWithTiers = leaderboard.map((sub) => ({
+    name: sub.firstName![0] + sub.lastName![0],
+    submittedAt: sub.submittedAt,
+    prizeTier: sub.prizeId ? prizeMap.get(sub.prizeId) : null,
+  }));
+
+  return c.json(leaderboardWithTiers);
 });
 
 const submissionSchema = z.object({
