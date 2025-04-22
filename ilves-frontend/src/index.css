@@ -3,20 +3,20 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --text: 18.22%, 0.000, 89.88;
-  --background: 98.51%, 0.000, 89.88;
-  --primary: 58.51%, 0.182, 24.74;
-  --secondary: 72.53%, 0.127, 20.64;
-  --accent: 65.96%, 0.188, 23.81;
+  --text: #121212;
+  --background: #fafafa;
+  --primary: #d24141;
+  --secondary: #eb8484;
+  --accent: #ef5757;
+  font-family: Inter, sans-serif;
 }
 .dark {
-  --text: 94.61%, 0.000, 89.88;
-  --background: 11.49%, 0.000, 89.88;
-  --primary: 52.87%, 0.182, 26.04;
-  --secondary: 37.90%, 0.137, 26.85;
-  --accent: 46.57%, 0.182, 28.23;
+  --text: #ededed;
+  --background: #050505;
+  --primary: #be2d2d;
+  --secondary: #7b1414;
+  --accent: #a81010;
 }
-
 
 @theme inline {
   --color-text: var(--text);
@@ -24,4 +24,12 @@
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
   --color-accent: var(--accent);
+
+  --font-size-sm: 0.75rem;
+  --font-size-base: 1rem;
+  --font-size-xl: 1.333rem;
+  --font-size-2xl: 1.777rem;
+  --font-size-3xl: 2.369rem;
+  --font-size-4xl: 3.158rem;
+  --font-size-5xl: 4.21rem;
 }
