@@ -22,7 +22,7 @@ export const submissions = sqliteTable("submissions", {
 
 export const prizes = sqliteTable("prizes", {
   id: integer("id").primaryKey({ autoIncrement: true }),
-  date: integer("date", { mode: "timestamp" }).notNull(),
+  availableDate: integer("available_date", { mode: "timestamp" }).notNull(),
   tier: text("tier", { enum: ["high", "medium", "low"] }).notNull(),
   awarded: integer("awarded", { mode: "boolean" }).notNull().default(false),
   awardedAt: integer("awarded_at", { mode: "timestamp" }),
