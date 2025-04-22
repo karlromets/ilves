@@ -1,6 +1,7 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import submissionsRoute from './routes/submissions-route.js'
+import { schedulePrizeGeneration } from './services/cron-service.js'
 
 const app = new Hono()
 
@@ -9,6 +10,8 @@ app.get('/', (c) => {
 })
 
 app.route("/submissions", submissionsRoute);
+
+schedulePrizeGeneration();
 
 serve({
   fetch: app.fetch,
