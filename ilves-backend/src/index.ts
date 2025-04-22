@@ -1,11 +1,14 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
+import submissionsRoute from './routes/submissions-route.js'
 
 const app = new Hono()
 
 app.get('/', (c) => {
   return c.text('Hello Hono!')
 })
+
+app.route("/submissions", submissionsRoute);
 
 serve({
   fetch: app.fetch,
