@@ -1,8 +1,7 @@
 import { relations, sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-
-export const codes = sqliteTable("codes", {
+export const codesTable = sqliteTable("codes", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   code: text("code").notNull().unique(),
   used: integer("used", { mode: "boolean" }).notNull().default(false),
@@ -10,17 +9,19 @@ export const codes = sqliteTable("codes", {
   submissionId: integer("submission_id"),
 });
 
-export const submissions = sqliteTable("submissions", {
+export const submissionsTable = sqliteTable("submissions", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   codeId: integer("code_id").notNull(),
-  submittedAt: integer("submitted_at", { mode: "timestamp" }).notNull().default(sql`CURRENT_TIMESTAMP`),
+  submittedAt: integer("submitted_at", { mode: "timestamp" })
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
   isWinner: integer("is_winner", { mode: "boolean" }).notNull(),
   prizeId: integer("prize_id"),
   firstName: text("first_name"),
   lastName: text("last_name"),
 });
 
-export const prizes = sqliteTable("prizes", {
+export const prizesTable = sqliteTable("prizes", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   availableDate: integer("available_date", { mode: "timestamp" }).notNull(),
   tier: text("tier", { enum: ["high", "medium", "low"] }).notNull(),
@@ -29,36 +30,36 @@ export const prizes = sqliteTable("prizes", {
   submissionId: integer("submission_id"),
 });
 
-export const codesRelations = relations(codes, ({ one }) => ({
-  submission: one(submissions, {
-    fields: [codes.submissionId],
-    references: [submissions.id],
+export const codesRelations = relations(codesTable, ({ one }) => ({
+  submission: one(submissionsTable, {
+    fields: [codesTable.submissionId],
+    references: [submissionsTable.id],
   }),
 }));
 
-export const submissionsRelations = relations(submissions, ({ one }) => ({
-  code: one(codes, {
-    fields: [submissions.codeId],
-    references: [codes.id],
+export const submissionsRelations = relations(submissionsTable, ({ one }) => ({
+  code: one(codesTable, {
+    fields: [submissionsTable.codeId],
+    references: [codesTable.id],
   }),
-  prize: one(prizes, {
-    fields: [submissions.prizeId],
-    references: [prizes.id],
-  }),
-}));
-
-export const prizesRelations = relations(prizes, ({ one }) => ({
-  submission: one(submissions, {
-    fields: [prizes.submissionId],
-    references: [submissions.id],
+  prize: one(prizesTable, {
+    fields: [submissionsTable.prizeId],
+    references: [prizesTable.id],
   }),
 }));
 
-export type Code = typeof codes.$inferSelect;
-export type CodeInsert = typeof codes.$inferInsert;
+export const prizesRelations = relations(prizesTable, ({ one }) => ({
+  submission: one(submissionsTable, {
+    fields: [prizesTable.submissionId],
+    references: [submissionsTable.id],
+  }),
+}));
 
-export type Submission = typeof submissions.$inferSelect;
-export type SubmissionInsert = typeof submissions.$inferInsert;
+export type Code = typeof codesTable.$inferSelect;
+export type CodeInsert = typeof codesTable.$inferInsert;
 
-export type Prize = typeof prizes.$inferSelect;
-export type PrizeInsert = typeof prizes.$inferInsert;
+export type Submission = typeof submissionsTable.$inferSelect;
+export type SubmissionInsert = typeof submissionsTable.$inferInsert;
+
+export type Prize = typeof prizesTable.$inferSelect;
+export type PrizeInsert = typeof prizesTable.$inferInsert;
