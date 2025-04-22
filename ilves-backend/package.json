@@ -5,7 +5,10 @@
     "dev": "tsx watch src/index.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@hono/node-server": "^1.14.1",
@@ -14,13 +17,19 @@
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.42.0",
     "hono": "^4.7.7",
+    "node-cron": "^3.0.3",
     "zod": "^3.24.3"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20.11.17",
+    "@types/node-cron": "^3.0.11",
+    "@vitest/coverage-istanbul": "^3.1.2",
     "drizzle-kit": "^0.31.0",
-    "tsx": "^4.19.3"
+    "jsdom": "^26.1.0",
+    "tsx": "^4.19.3",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.1.2"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

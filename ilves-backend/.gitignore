@@ -31,3 +31,7 @@ node_modules/
 # db
 drizzle/
 db.sqlite
+
+# tests
+coverage/
+test-db.sqlite

@@ -6,7 +6,7 @@ import 'dotenv/config';
 // Default: Midnight daily
 const PRIZE_GENERATION_SCHEDULE = process.env.PRIZE_GENERATION_SCHEDULE || '0 0 * * *';
 
-async function generateDailyPrizes() {
+export async function generateDailyPrizes() {
     console.log('Running daily prize generation job...');
     const now = new Date();
     const availableDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -61,6 +61,9 @@ export function schedulePrizeGeneration() {
 
     console.log(`Prize generation scheduled with pattern: "${PRIZE_GENERATION_SCHEDULE}"`);
 
-    // Optional: Run once immediately on startup if needed for testing or initial population
-    generateDailyPrizes();
+    // Only run immediately on startup if in development environment
+    if (process.env.NODE_ENV === 'development') {
+        console.log("Running initial prize generation in development mode...");
+        generateDailyPrizes();
+    }
 }
