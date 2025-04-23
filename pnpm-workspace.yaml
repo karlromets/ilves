@@ -1,0 +1,4 @@
+packages:
+  - 'ilves-backend'
+  - 'ilves-frontend'
+  - 'shared/*' 

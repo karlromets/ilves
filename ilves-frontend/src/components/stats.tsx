@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SubmissionCount } from '../types';
+import { SubmissionCount } from 'ilves-schemas';
 import { apiService } from '../services/api';
 import { toast } from 'sonner';
 

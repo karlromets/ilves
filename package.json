@@ -1,0 +1,20 @@
+{
+  "name": "ilves",
+  "private": true,
+  "scripts": {
+    "dev:backend": "pnpm --filter ilves-backend dev",
+    "dev:frontend": "pnpm --filter ilves-frontend dev",
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose build"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@swc/core",
+      "better-sqlite3",
+      "esbuild"
+    ]
+  }
+}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { codeSchema } from "../types";
+import { codeSchema } from "ilves-schemas";
 import { apiService } from "../services/api";
 import { ZodError } from "zod";
 import { Input } from "@/components/ui/input";
@@ -47,7 +47,7 @@ export function CodeForm({ onWin }: CodeFormProps) {
       const result = await apiService.submitCode(code);
 
       if (result.win) {
-        onWin(result.submissionId, result.prizeTier);
+        onWin(result.submissionId, result.prizeTier || "");
       } else {
         setCode("");
         toast.info("Sorry, code did not have a prize")

@@ -23,7 +23,8 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "ilves-schemas": ["../shared/schemas/src"]
     }
   },
   "include": ["src"]

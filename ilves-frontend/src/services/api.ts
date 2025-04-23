@@ -3,7 +3,7 @@ import {
   SubmissionCount,
   SubmissionResponse,
   ClaimResponse,
-} from "../types";
+} from "ilves-schemas";
 
 const API_URL = "/api";
 

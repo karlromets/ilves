@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { claimSchema } from "../types";
+import { claimSchema } from "ilves-schemas";
 import { apiService } from "../services/api";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";

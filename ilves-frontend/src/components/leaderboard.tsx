@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LeaderboardEntry } from "../types";
+import { LeaderboardEntry } from "ilves-schemas";
 import { apiService } from "../services/api";
 import { formatDate } from "date-fns";
 import { toast } from "sonner";
@@ -94,7 +94,7 @@ export function Leaderboard() {
                 </div>
                 <span
                   className={`px-2 py-1 text-xs font-semibold rounded-full ${getPrizeTierClass(
-                    winner.prizeTier
+                    winner.prizeTier || ""
                   )}`}
                 >
                   {winner.prizeTier}

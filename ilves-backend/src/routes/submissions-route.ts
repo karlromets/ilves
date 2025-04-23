@@ -10,6 +10,7 @@ import { eq, and, asc, sql, gte, desc, inArray, not } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import "dotenv/config";
+import { submissionRequestSchema, claimSchema } from "ilves-schemas";
 
 const submissionsRoute = new Hono();
 
@@ -109,12 +110,6 @@ submissionsRoute.get("/leaderboard", async (c) => {
   return c.json(leaderboardWithTiers);
 });
 
-const submissionSchema = z.object({
-  code: z
-    .string()
-    .regex(/^[a-zA-Z0-9]{5}$/, "Code must be 5 alphanumeric characters"),
-});
-
 function determinePrizeTier(): Prize["tier"] | null {
   const highProb = parseFloat(process.env.HIGH_WIN_PROBABILITY || "0.0001");
   const medProb = parseFloat(process.env.MED_WIN_PROBABILITY || "0.0002");
@@ -134,7 +129,7 @@ function determinePrizeTier(): Prize["tier"] | null {
   return "low";
 }
 
-submissionsRoute.post("/", zValidator("json", submissionSchema), async (c) => {
+submissionsRoute.post("/", zValidator("json", submissionRequestSchema), async (c) => {
   const { code } = c.req.valid("json");
   const now = new Date();
 
@@ -289,17 +284,6 @@ submissionsRoute.post("/", zValidator("json", submissionSchema), async (c) => {
       500
     );
   }
-});
-
-const claimSchema = z.object({
-  firstName: z
-    .string()
-    .min(1, "First name cannot be empty")
-    .max(255, "First name cannot be longer than 255 characters"),
-  lastName: z
-    .string()
-    .min(1, "Last name cannot be empty")
-    .max(255, "Last name cannot be longer than 255 characters"),
 });
 
 submissionsRoute.patch(
