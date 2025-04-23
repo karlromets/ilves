@@ -17,8 +17,9 @@ COPY ilves-backend ./ilves-backend
 COPY shared/schemas ./shared/schemas
 
 RUN cd shared/schemas && pnpm build
-
 RUN cd ilves-backend && pnpm build
+
+RUN cd ilves-backend && pnpm db:generate --config ./drizzle.config.ts
 
 RUN pnpm prune --prod --no-optional
 
@@ -33,15 +34,17 @@ COPY --from=builder /app/shared/schemas/dist ./shared/schemas/dist
 COPY --from=builder /app/shared/schemas/package.json ./shared/schemas/package.json
 COPY --from=builder /app/ilves-backend/dist ./ilves-backend/dist
 COPY --from=builder /app/ilves-backend/package.json ./ilves-backend/package.json
+
 COPY --from=builder /app/ilves-backend/drizzle ./ilves-backend/drizzle
 
-RUN npm install -g pnpm
-
+COPY ilves-backend/migrate.js ./ilves-backend/migrate.js
 COPY ilves-backend/entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/entrypoint.sh
+
+VOLUME /app/ilves-backend/db
 
 EXPOSE 8000
 
 ENTRYPOINT ["entrypoint.sh"]
 
-CMD ["node", "dist/src/index.js"]
+CMD ["node", "ilves-backend/dist/src/index.js"]
