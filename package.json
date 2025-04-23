@@ -6,9 +6,9 @@
     "dev:frontend": "pnpm --filter ilves-frontend dev",
     "dev": "pnpm -r --parallel dev",
     "build": "pnpm -r build",
-    "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
-    "docker:build": "docker-compose build"
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:build": "docker compose build"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

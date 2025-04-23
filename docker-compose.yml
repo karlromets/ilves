@@ -1,0 +1,51 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ilves-backend/Dockerfile
+    container_name: ilves-backend
+    environment:
+      - NODE_ENV=production
+      - PORT=8000
+      - HIGH_WIN_PROBABILITY=0.0001
+      - MED_WIN_PROBABILITY=0.0002
+      - LOW_WIN_PROBABILITY=0.0003
+      - DATABASE_URL=/app/ilves-backend/db/sqlite.db
+    volumes:
+      - ./ilves-backend/db:/app/ilves-backend/db
+    restart: unless-stopped
+    networks:
+      - ilves-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: ilves-frontend/Dockerfile
+    container_name: ilves-frontend-builder
+    volumes:
+      - frontend_build:/app/ilves-frontend/dist
+    networks:
+      - ilves-network
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: ilves-nginx
+    restart: unless-stopped
+    volumes:
+      - frontend_build:/usr/share/nginx/html
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "80:80"
+    networks:
+      - ilves-network
+
+networks:
+  ilves-network:
+    driver: bridge
+
+volumes:
+  frontend_build:

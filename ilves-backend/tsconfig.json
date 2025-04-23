@@ -13,6 +13,8 @@
     "baseUrl": ".",
     "paths": {
       "ilves-schemas": ["../shared/schemas/src"]
-    }
-  }
+    },
+    "outDir": "./dist",
+  },
+  "include": ["src/**/*.ts", "drizzle.config.ts"]
 }
