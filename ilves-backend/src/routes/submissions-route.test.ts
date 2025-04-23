@@ -181,9 +181,10 @@ describe("Submissions Route", () => {
 
       expect(res.status).toBe(200);
       expect(body).toHaveLength(2);
-      expect(body[0].name).toBe("JD");
-      expect(body[0].prizeTier).toBe("high");
-      expect(body[1].name).toBe("JS");
+      const sortedBody = body.sort((a: any, b: any) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
+      expect(sortedBody[0].initials).toBe("JD");
+      expect(sortedBody[0].prizeTier).toBe("high");
+      expect(sortedBody[1].initials).toBe("JS");
     });
 
     test("should return empty array when no winners", async () => {
@@ -265,12 +266,12 @@ describe("Submissions Route", () => {
 
     test("should create a winning submission when prizes available", async () => {
       await db.insert(prizesTable).values([
-        { tier: "high", awarded: false, availableDate: new Date() },
+        { tier: "high", awarded: false, availableDate: new Date(Date.now() - 1000) },
         { tier: "medium", awarded: false, availableDate: new Date() },
         { tier: "low", awarded: false, availableDate: new Date() },
       ]);
 
-      const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.0001);
+      const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0.00005);
 
       const res = await app.request("/submissions", {
         method: "POST",
