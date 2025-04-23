@@ -6,6 +6,7 @@ This repository contains the frontend and backend services for the Ilves applica
 
 - `ilves-frontend`: React frontend
 - `ilves-backend`: Node.js backend, Hono.js
+- `nginx`: Proxy
 - `shared/schemas`: Shared Zod schemas for type validation
 
 ## Development Setup
