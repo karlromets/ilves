@@ -11,21 +11,25 @@ export const apiService = {
   async getLeaderboard(): Promise<LeaderboardEntry[]> {
     const response = await fetch(`${API_URL}/submissions/leaderboard`);
 
+    const responseJson = await response.json()
+
     if (!response.ok) {
-      throw new Error("Failed to fetch leaderboard");
+      throw new Error(responseJson.message);
     }
 
-    return response.json();
+    return responseJson;
   },
 
   async getSubmissionCount(): Promise<SubmissionCount> {
     const response = await fetch(`${API_URL}/submissions/count`);
 
+    const responseJson = await response.json()
+
     if (!response.ok) {
-      throw new Error("Failed to fetch submission count");
+      throw new Error(responseJson.message);
     }
 
-    return response.json();
+    return responseJson;
   },
 
   async submitCode(code: string): Promise<SubmissionResponse> {
@@ -37,11 +41,13 @@ export const apiService = {
       body: JSON.stringify({ code }),
     });
 
+    const responseJson = await response.json()
+
     if (!response.ok) {
-      throw new Error("Failed to submit code");
+      throw new Error(responseJson.message);
     }
 
-    return response.json();
+    return responseJson;
   },
 
   async claimPrize(
@@ -60,10 +66,12 @@ export const apiService = {
       }
     );
 
+    const responseJson = await response.json()
+
     if (!response.ok) {
-      throw new Error("Failed to claim prize");
+      throw new Error(responseJson.message);
     }
 
-    return response.json();
+    return responseJson;
   },
 };
