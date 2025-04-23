@@ -2,22 +2,37 @@ import cron from 'node-cron';
 import { db } from '../db/index.js';
 import { prizesTable, type PrizeInsert } from '../db/schema.js';
 import 'dotenv/config';
+import { eq } from 'drizzle-orm';
 
 // Default: Midnight daily
 const PRIZE_GENERATION_SCHEDULE = process.env.PRIZE_GENERATION_SCHEDULE || '0 0 * * *';
 
 export async function generateDailyPrizes() {
-    console.log('Running daily prize generation job...');
+    console.log('Checking daily prize generation job...');
     const now = new Date();
-    const availableDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    // Get the start of today (UTC, since cron runs in UTC)
+    const startOfToday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
+    // Check if prizes for today already exist
+    const existingPrizes = db.select({ id: prizesTable.id })
+                                   .from(prizesTable)
+                                   .where(eq(prizesTable.availableDate, startOfToday))
+                                   .limit(1)
+                                   .get();
+
+    if (existingPrizes) {
+        console.log(`Prizes for ${startOfToday.toDateString()} already exist. Skipping generation.`);
+        return;
+    }
+
+    console.log(`Generating prizes for ${startOfToday.toDateString()}...`);
     const prizesToInsert: PrizeInsert[] = [];
 
     // 1 High Tier Prize
     prizesToInsert.push({
         tier: 'high',
         awarded: false,
-        availableDate: availableDate,
+        availableDate: startOfToday,
     });
 
     // 2 Medium Tier Prizes
@@ -25,7 +40,7 @@ export async function generateDailyPrizes() {
         prizesToInsert.push({
             tier: 'medium',
             awarded: false,
-            availableDate: availableDate,
+            availableDate: startOfToday,
         });
     }
 
@@ -34,13 +49,13 @@ export async function generateDailyPrizes() {
         prizesToInsert.push({
             tier: 'low',
             awarded: false,
-            availableDate: availableDate,
+            availableDate: startOfToday,
         });
     }
 
     try {
         await db.insert(prizesTable).values(prizesToInsert);
-        console.log(`Successfully inserted ${prizesToInsert.length} prizes for ${availableDate.toDateString()}.`);
+        console.log(`Successfully inserted ${prizesToInsert.length} prizes for ${startOfToday.toDateString()}.`);
     } catch (error) {
         console.error('Failed to insert daily prizes:', error);
     }
@@ -61,9 +76,6 @@ export function schedulePrizeGeneration() {
 
     console.log(`Prize generation scheduled with pattern: "${PRIZE_GENERATION_SCHEDULE}"`);
 
-    // Only run immediately on startup if in development environment
-    if (process.env.NODE_ENV === 'development') {
-        console.log("Running initial prize generation in development mode...");
-        generateDailyPrizes();
-    }
+    console.log("Running initial prize generation check on startup...");
+    generateDailyPrizes();
 }
