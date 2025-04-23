@@ -53,10 +53,10 @@ pnpm docker:down
 
 ### Docker Configuration
 
-- `docker-compose.yml`: Defines the services (frontend, backend)
+- `docker-compose.yml`: Defines the services (frontend, backend, nginx)
 - `ilves-frontend/Dockerfile`: Frontend container configuration
 - `ilves-backend/Dockerfile`: Backend container configuration
-- `ilves-frontend/nginx.conf`: Nginx configuration for serving the frontend and proxying API requests
+- `nginx/Dockerfile`: Nginx container configuration
 
 ### Accessing the Application
 
