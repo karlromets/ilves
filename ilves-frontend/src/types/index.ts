@@ -13,7 +13,7 @@ export const claimSchema = z.object({
 });
 
 export type LeaderboardEntry = {
-  name: string;
+  initials: string;
   submittedAt: string;
   prizeTier: 'high' | 'medium' | 'low';
 };

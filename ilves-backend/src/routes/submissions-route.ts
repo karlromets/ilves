@@ -92,11 +92,19 @@ submissionsRoute.get("/leaderboard", async (c) => {
 
   const prizeMap = new Map(prizes.map((p) => [p.id, p.tier]));
 
-  let leaderboardWithTiers = leaderboard.map((sub) => ({
-    name: sub.firstName![0] + sub.lastName![0],
-    submittedAt: sub.submittedAt,
-    prizeTier: sub.prizeId ? prizeMap.get(sub.prizeId) : null,
-  }));
+  let leaderboardWithTiers = leaderboard.map((sub) => {
+    // First or last name might be multiple words, so we need to split them and take the first letter of each word
+    const firstNameInitials = sub.firstName?.split(' ').map(name => name[0]).join('') || '';
+    const lastNameInitials = sub.lastName?.split(' ').map(name => name[0]).join('') || '';
+
+    const initials = firstNameInitials + lastNameInitials;
+    const prizeTier = sub.prizeId ? prizeMap.get(sub.prizeId) : null;
+    return {
+      initials,
+      submittedAt: sub.submittedAt,
+      prizeTier,
+    };
+  });
 
   return c.json(leaderboardWithTiers);
 });
